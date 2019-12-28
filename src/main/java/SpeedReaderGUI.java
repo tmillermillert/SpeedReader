@@ -33,14 +33,19 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.JToggleButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Dimension;
 import javax.swing.JTabbedPane;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
+import java.awt.Component;
+import javax.swing.JSplitPane;
 
-public class SpeadReaderGUI extends JFrame {
+public class SpeedReaderGUI extends JFrame {
 
     private JPanel contentPane;
     private JLabel lblWord;
@@ -60,6 +65,8 @@ public class SpeadReaderGUI extends JFrame {
     private File file;
     private JPanel panel_2;
     private JTabbedPane tabbedPane;
+    private JPanel panel_3;
+    private JSplitPane splitPane;
      
     /**
      * Launch the application.
@@ -68,9 +75,9 @@ public class SpeadReaderGUI extends JFrame {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 
-                SpeadReaderGUI frame = null;
+                SpeedReaderGUI frame = null;
                 try {
-                    frame = new SpeadReaderGUI();
+                    frame = new SpeedReaderGUI();
                     frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -82,7 +89,7 @@ public class SpeadReaderGUI extends JFrame {
     /**
      * Create the frame.
      */
-    public SpeadReaderGUI() {
+    public SpeedReaderGUI() {
         number_of_lines = 0;
         time_delay = 1000;
         isStopped = true;
@@ -118,123 +125,37 @@ public class SpeadReaderGUI extends JFrame {
         GroupLayout gl_contentPane = new GroupLayout(contentPane);
         gl_contentPane.setHorizontalGroup(
             gl_contentPane.createParallelGroup(Alignment.LEADING)
-                .addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 954, Short.MAX_VALUE)
+                .addGroup(gl_contentPane.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 942, Short.MAX_VALUE)
+                    .addContainerGap())
         );
         gl_contentPane.setVerticalGroup(
             gl_contentPane.createParallelGroup(Alignment.LEADING)
-                .addGroup(gl_contentPane.createSequentialGroup()
-                    .addComponent(tabbedPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
+                    .addContainerGap())
         );
         
         panel_2 = new JPanel();
         tabbedPane.addTab("New tab", null, panel_2, null);
-        JPanel panel = new JPanel();
         
         progressBar = new JProgressBar();
         progressBar.setStringPainted(true);
-        
-        JSlider slider = new JSlider();
-        
-        JLabel lblTimeDelayseconds = new JLabel("Time Delay (seconds):");
         spinner = new JSpinner(model);
+        spinner.setToolTipText("Time Delay (seconds)");
         
-        lblWord = new JLabel("Word Being Read");
-        lblWord.setFont(new Font("Lucida Grande", Font.PLAIN, 45));
-        lblWord.setHorizontalAlignment(SwingConstants.CENTER);
-        lblWord.setBackground(Color.LIGHT_GRAY);
+                
+                spinner.addChangeListener(new ChangeListener() {
+                    public void stateChanged(ChangeEvent e) {
+                        time_delay = (long) (Float.valueOf(spinner.getValue().toString()) * 1000f);
+                    }
+                });
+        
+                
+                JLabel lblTimeDelayseconds = new JLabel("Time Delay (seconds):");
         tglbtnButton = new JToggleButton("Stopped: Press to start reading");
-        
-        GroupLayout gl_panel = new GroupLayout(panel);
-        gl_panel.setHorizontalGroup(
-            gl_panel.createParallelGroup(Alignment.LEADING)
-                .addGroup(Alignment.TRAILING, gl_panel.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-                        .addComponent(lblWord, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
-                        .addComponent(progressBar, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
-                        .addGroup(Alignment.LEADING, gl_panel.createSequentialGroup()
-                            .addComponent(slider, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(lblTimeDelayseconds)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(spinner, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE))
-                        .addComponent(tglbtnButton, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE))
-                    .addContainerGap())
-        );
-        gl_panel.setVerticalGroup(
-            gl_panel.createParallelGroup(Alignment.TRAILING)
-                .addGroup(gl_panel.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(tglbtnButton)
-                    .addPreferredGap(ComponentPlacement.UNRELATED)
-                    .addComponent(lblWord, GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
-                    .addPreferredGap(ComponentPlacement.RELATED)
-                    .addGroup(gl_panel.createParallelGroup(Alignment.TRAILING, false)
-                        .addComponent(slider, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-                            .addComponent(spinner, GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
-                            .addComponent(lblTimeDelayseconds)))
-                    .addPreferredGap(ComponentPlacement.UNRELATED)
-                    .addComponent(progressBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap())
-        );
-        panel.setLayout(gl_panel);
-        
-        panel_1 = new JPanel();
-        
-        JScrollPane scrollPane = new JScrollPane();
-        GroupLayout gl_panel_1 = new GroupLayout(panel_1);
-        gl_panel_1.setHorizontalGroup(
-            gl_panel_1.createParallelGroup(Alignment.TRAILING)
-                .addGroup(gl_panel_1.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
-                    .addContainerGap())
-        );
-        gl_panel_1.setVerticalGroup(
-            gl_panel_1.createParallelGroup(Alignment.TRAILING)
-                .addGroup(Alignment.LEADING, gl_panel_1.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)
-                    .addContainerGap())
-        );
-        
-        JTextArea textArea = new JTextArea();
-        //textArea.setText("");
-        scrollPane.setViewportView(textArea);
-        panel_1.setLayout(gl_panel_1);
-        GroupLayout gl_panel_2 = new GroupLayout(panel_2);
-        gl_panel_2.setHorizontalGroup(
-            gl_panel_2.createParallelGroup(Alignment.LEADING)
-                .addGroup(gl_panel_2.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(panel, GroupLayout.PREFERRED_SIZE, 411, GroupLayout.PREFERRED_SIZE)
-                    .addGap(5)
-                    .addComponent(panel_1, GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE)
-                    .addContainerGap())
-        );
-        gl_panel_2.setVerticalGroup(
-            gl_panel_2.createParallelGroup(Alignment.LEADING)
-                .addGroup(gl_panel_2.createSequentialGroup()
-                    .addGap(5)
-                    .addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
-                        .addComponent(panel_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(panel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addContainerGap())
-        );
-        panel_2.setLayout(gl_panel_2);
-        
-        
-        ///////////Event 
-        ///////////////////////////
-        ///////////////////////////
-        
-        spinner.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                time_delay = (long) (Float.valueOf(spinner.getValue().toString()) * 1000f);
-            }
-        });
         
 
         
@@ -256,6 +177,113 @@ public class SpeadReaderGUI extends JFrame {
                 }
             }
         });
+        
+        panel_3 = new JPanel();
+        GroupLayout gl_panel_2 = new GroupLayout(panel_2);
+        gl_panel_2.setHorizontalGroup(
+            gl_panel_2.createParallelGroup(Alignment.LEADING)
+                .addGroup(gl_panel_2.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
+                        .addGroup(gl_panel_2.createSequentialGroup()
+                            .addComponent(panel_3, GroupLayout.DEFAULT_SIZE, 909, Short.MAX_VALUE)
+                            .addContainerGap())
+                        .addGroup(gl_panel_2.createSequentialGroup()
+                            .addComponent(progressBar, GroupLayout.PREFERRED_SIZE, 189, GroupLayout.PREFERRED_SIZE)
+                            .addGap(31)
+                            .addComponent(tglbtnButton, GroupLayout.PREFERRED_SIZE, 391, GroupLayout.PREFERRED_SIZE)
+                            .addGap(73)
+                            .addComponent(lblTimeDelayseconds, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(spinner, GroupLayout.PREFERRED_SIZE, 64, GroupLayout.PREFERRED_SIZE)
+                            .addGap(23))))
+        );
+        gl_panel_2.setVerticalGroup(
+            gl_panel_2.createParallelGroup(Alignment.LEADING)
+                .addGroup(gl_panel_2.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(panel_3, GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
+                        .addComponent(progressBar, GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE)
+                        .addComponent(tglbtnButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(gl_panel_2.createSequentialGroup()
+                            .addGap(2)
+                            .addComponent(lblTimeDelayseconds, GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
+                            .addGap(2))
+                        .addComponent(spinner, GroupLayout.PREFERRED_SIZE, 29, Short.MAX_VALUE))
+                    .addGap(6))
+        );
+        
+        splitPane = new JSplitPane();
+        splitPane.setResizeWeight(0.5);
+        GroupLayout gl_panel_3 = new GroupLayout(panel_3);
+        gl_panel_3.setHorizontalGroup(
+            gl_panel_3.createParallelGroup(Alignment.LEADING)
+                .addGroup(gl_panel_3.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(splitPane, GroupLayout.DEFAULT_SIZE, 897, Short.MAX_VALUE)
+                    .addContainerGap())
+        );
+        gl_panel_3.setVerticalGroup(
+            gl_panel_3.createParallelGroup(Alignment.LEADING)
+                .addGroup(gl_panel_3.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(splitPane, GroupLayout.PREFERRED_SIZE, 277, GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(28, Short.MAX_VALUE))
+        );
+        JPanel panel = new JPanel();
+        splitPane.setLeftComponent(panel);
+        panel.setBackground(Color.BLUE);
+        
+        lblWord = new JLabel("Word Being Read");
+        lblWord.setFont(new Font("Lucida Grande", Font.PLAIN, 45));
+        lblWord.setHorizontalAlignment(SwingConstants.CENTER);
+        lblWord.setBackground(Color.LIGHT_GRAY);
+        GroupLayout gl_panel = new GroupLayout(panel);
+        gl_panel.setHorizontalGroup(
+            gl_panel.createParallelGroup(Alignment.LEADING)
+                .addGroup(gl_panel.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(lblWord, GroupLayout.DEFAULT_SIZE, 619, Short.MAX_VALUE)
+                    .addContainerGap())
+        );
+        gl_panel.setVerticalGroup(
+            gl_panel.createParallelGroup(Alignment.LEADING)
+                .addGroup(Alignment.TRAILING, gl_panel.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(lblWord, GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
+                    .addContainerGap())
+        );
+        panel.setLayout(gl_panel);
+        
+        panel_1 = new JPanel();
+        splitPane.setRightComponent(panel_1);
+        panel_1.setBackground(Color.PINK);
+        
+        JScrollPane scrollPane = new JScrollPane();
+        
+        JTextArea textArea = new JTextArea();
+        //textArea.setText("");
+        scrollPane.setViewportView(textArea);
+        GroupLayout gl_panel_1 = new GroupLayout(panel_1);
+        gl_panel_1.setHorizontalGroup(
+            gl_panel_1.createParallelGroup(Alignment.LEADING)
+                .addGroup(Alignment.TRAILING, gl_panel_1.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+                    .addContainerGap())
+        );
+        gl_panel_1.setVerticalGroup(
+            gl_panel_1.createParallelGroup(Alignment.LEADING)
+                .addGroup(gl_panel_1.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
+                    .addContainerGap())
+        );
+        panel_1.setLayout(gl_panel_1);
+        panel_3.setLayout(gl_panel_3);
+        panel_2.setLayout(gl_panel_2);
         contentPane.setLayout(gl_contentPane);
         
 
